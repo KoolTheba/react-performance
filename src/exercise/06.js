@@ -92,6 +92,32 @@ function useAppDispatch() {
   return context
 }
 
+function Cell ({row, column}){
+  const state = useAppState()
+  const cell = state.grid[row][column]
+  return <CellImpl cell={cell} row={row} column={column}/>
+}
+
+Cell = React.memo(Cell)
+
+function CellImpl({cell, row, column}) {
+  const dispatch = useAppDispatch()
+  const handleClick = () => dispatch({type: 'UPDATE_GRID_CELL', row, column})
+  return (
+    <button
+      className="cell"
+      onClick={handleClick}
+      style={{
+        color: cell > 50 ? 'white' : 'black',
+        backgroundColor: `rgba(0, 0, 0, ${cell / 100})`,
+      }}
+    >
+      {Math.floor(cell)}
+    </button>
+  )
+}
+CellImpl = React.memo(CellImpl)
+
 function Grid() {
   const dispatch = useAppDispatch()
   const [rows, setRows] = useDebouncedState(50)
@@ -109,26 +135,6 @@ function Grid() {
   )
 }
 Grid = React.memo(Grid)
-
-function Cell({row, column}) {
-  const state = useAppState()
-  const cell = state.grid[row][column]
-  const dispatch = useAppDispatch()
-  const handleClick = () => dispatch({type: 'UPDATE_GRID_CELL', row, column})
-  return (
-    <button
-      className="cell"
-      onClick={handleClick}
-      style={{
-        color: cell > 50 ? 'white' : 'black',
-        backgroundColor: `rgba(0, 0, 0, ${cell / 100})`,
-      }}
-    >
-      {Math.floor(cell)}
-    </button>
-  )
-}
-Cell = React.memo(Cell)
 
 function DogNameInput() {
   const [state, dispatch] = useDogState()
